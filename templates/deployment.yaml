@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rustcost.fullname" . | default "rustcost" }}
+  namespace: {{ .Release.Namespace | default "rustcost" }}
+  labels:
+    app: rustcost
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: rustcost
+  template:
+    metadata:
+      labels:
+        app: rustcost
+    spec:
+      serviceAccountName: rustcost
+      containers:
+        - name: rustcost
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          ports:
+            - containerPort: {{ .Values.app.port | int }}
+              name: http
+          env:
+            - name: PROMETHEUS_URL
+              value: {{ default "" .Values.metrics.prometheus.url | quote }}
+            - name: METRICS_SOURCE
+              value: {{- if .Values.nodeExporter.deploy -}}{{ "node-exporter" | quote }}{{- else -}}{{ "prometheus" | quote }}{{- end }}
+            - name: NODE_EXPORTER_SERVICE
+              value: {{ default "node-exporter" .Values.nodeExporter.service.name | quote }}
+            - name: DATABASE_URL
+              value: {{- if .Values.postgres.enable -}}
+                {{- printf "postgres://%s:%s@%s:%d/%s" .Values.postgres.username .Values.postgres.password (printf "postgres.%s.svc.cluster.local" .Release.Namespace) .Values.postgres.port .Values.postgres.database | quote -}}
+                {{- else if .Values.externalDatabase.enabled -}}
+                {{- .Values.externalDatabase.url | quote -}}
+                {{- else -}}
+                {{- "postgres://username:password@127.0.0.1:5432/rustcost" | quote -}}
+                {{- end }}
+            - name: PORT
+              value: "{{ .Values.app.port }}"
+            - name: HOST
+              value: "{{ .Values.app.host }}"
+            - name: RUST_LOG
+              value: "{{ .Values.app.rustLog }}"
+            - name: TOKEN_PATH
+              value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+            - name: CA_PATH
+              value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+            - name: API_SERVER
+              value: "https://kubernetes.default.svc"
+          resources:
+            requests:
+              cpu: "{{ .Values.resources.requests.cpu }}"
+              memory: "{{ .Values.resources.requests.memory }}"
+            limits:
+              cpu: "{{ .Values.resources.limits.cpu }}"
+              memory: "{{ .Values.resources.limits.memory }}"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem }}
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
