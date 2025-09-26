@@ -71,6 +71,7 @@ helm install rustcost ./rustcost-chart --create-namespace --namespace rustcost
 
 Disable the bundled database and provide your own connection string:
 
+```
 helm install rustcost ./rustcost-chart \
  --namespace rustcost --create-namespace \
  --set postgres.enable=false \
@@ -78,15 +79,18 @@ helm install rustcost ./rustcost-chart \
  --set externalDatabase.url="postgres://id:pwd@127.0.0.1:35001/rustcost" \
  --set app.port="5000" \
  --set app.host="127.0.0.1"
+```
 
 3. Integrating with Prometheus (recommended)
 
 Point the app to an existing Prometheus in your cluster:
 
+```
 helm install rustcost ./rustcost-chart \
  --namespace rustcost --create-namespace \
  --set metrics.prometheus.enabled=true \
  --set metrics.prometheus.url="http://prometheus-k8s.monitoring.svc:9090"
+```
 
 This sets PROMETHEUS_URL in the pod. Your app can query node metrics with PromQL (e.g., node_cpu_seconds_total, node_memory_MemAvailable_bytes).
 
@@ -94,18 +98,22 @@ This sets PROMETHEUS_URL in the pod. Your app can query node metrics with PromQL
 
 If you run Prometheus Operator, enable a ServiceMonitor so Prometheus scrapes node-exporter:
 
+```
 helm install rustcost ./rustcost-chart \
  --set metrics.prometheusServiceMonitor.enabled=true \
  --set metrics.prometheusServiceMonitor.namespace=monitoring
+```
 
 5. Deploying node-exporter via this chart (optional)
 
 Not recommended if you already run node-exporter cluster-wide:
 
+```
 helm install rustcost ./rustcost-chart \
  --set nodeExporter.deploy=true \
  --set metrics.prometheusServiceMonitor.enabled=true \
  --set metrics.prometheusServiceMonitor.namespace=monitoring
+```
 
 ---
 
