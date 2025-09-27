@@ -1,0 +1,18 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rustcost.fullname" . }}-frontend
+  labels:
+    {{- include "rustcost.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.frontend.service.type }}
+  ports:
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "rustcost.name" . }}-frontend
+    release: {{ .Release.Name }}
+{{- end }}

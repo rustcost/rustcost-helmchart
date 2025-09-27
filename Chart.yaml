@@ -1,6 +1,24 @@
 apiVersion: v2
 name: rustcost
-description: RustCost + optional bundled PostgreSQL
+description: A Helm chart for deploying Rustcost (Axum backend, optional React frontend, optional PostgreSQL, and node-level metrics collectors like node-exporter and cAdvisor)
+
 type: application
+
+# Chart version (increment this when you change templates)
 version: 0.1.0
-appVersion: "1.0.0"
+
+# App version (matches your Rustcost release, or "latest" if dev)
+appVersion: "0.1.0"
+
+keywords:
+  - rust
+  - axum
+  - monitoring
+  - node-exporter
+  - cadvisor
+  - postgres
+
+sources:
+  - https://github.com/rustcost/rustcost-helmchart
+
+dependencies: []

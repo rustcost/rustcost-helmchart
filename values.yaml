@@ -1,77 +1,83 @@
-# default values for rustcost chart
+# Number of backend replicas
+replicaCount: 1
 
-# app image settings
+# -----------------------------
+# Rustcost Backend (Axum)
+# -----------------------------
 image:
   repository: kimc1992/rustcost
-  tag: latest
+  tag: "latest"
   pullPolicy: IfNotPresent
-
-replicaCount: 1
 
 service:
   type: ClusterIP
-  port: 3000 # service port for the app (container port is set in container to PORT env)
+  port: 80
+  targetPort: 8080
 
-resources:
-  requests:
-    cpu: "10m"
-    memory: "55Mi"
-  limits:
-    cpu: "999m"
-    memory: "1Gi"
+resources: {}
+# Example:
+# resources:
+#   requests:
+#     cpu: "100m"
+#     memory: "128Mi"
+#   limits:
+#     cpu: "500m"
+#     memory: "512Mi"
 
-securityContext:
-  runAsUser: 1001
-  readOnlyRootFilesystem: true
-
-# Embedded Postgres (set enable=false to use external DB)
-postgres:
-  enable: true
-  image:
-    repository: postgres
-    tag: "17.6-alpine3.22"
-  # credentials (change these in production!).
-  # These will be created as a Kubernetes Secret if postgres.enable=true
+# -----------------------------
+# PostgreSQL (optional)
+# -----------------------------
+postgresql:
+  enabled: true
+  image: postgres:17
   username: rustcost
   password: rustcostpassword
   database: rustcost
-  port: 5432
   persistence:
     enabled: true
-    storageClass: "" # leave empty for default
     size: 1Gi
+  runMigrations: true # run job-migrations.yaml if enabled
 
-# External DB usage:
-# If postgres.enable=false, provide an externalDatabase.url value
-externalDatabase:
-  enabled: false
-  url: "postgres://rustcost:rustcostpassword@postgres.rustcost.svc.cluster.local:5432/rustcost"
-
-# app env overrides (will be used to set PORT/HOST etc.)
-app:
-  port: "3000"
-  host: "0.0.0.0"
-  rustLog: "info"
-
-# metrics / prometheus config
-metrics:
-  # If true, rustcost will be given a PROMETHEUS_URL env var to query
-  prometheus:
-    enabled: true # if false, rustcost won't try to query Prometheus
-    url: "" # leave empty to autodetect (see notes), or set to e.g. "http://prometheus-k8s.monitoring.svc:9090"
-
-  # Option to let this chart create a ServiceMonitor that points Prometheus at node-exporter
-  prometheusServiceMonitor:
-    enabled: false # set true if you run the Prometheus Operator and want the chart to add a ServiceMonitor
-    namespace: monitoring # namespace where Prometheus is watching ServiceMonitors (change if needed)
-    interval: 30s
-
-# Optionally deploy node-exporter (daemonset)
-nodeExporter:
-  deploy: false # set true only if you want the chart to deploy node-exporter DaemonSet
+# -----------------------------
+# Frontend (React, optional)
+# -----------------------------
+frontend:
+  enabled: true
   image:
-    repository: quay.io/prometheus/node-exporter
-    tag: v1.6.1
+    repository: kimc1992/rustcost-frontend
+    tag: "latest"
+    pullPolicy: IfNotPresent
   service:
-    annotations: {}
-    # if deploying, change service type/port if you want
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+
+# -----------------------------
+# Node Exporter
+# -----------------------------
+nodeExporter:
+  enabled: true
+  image: quay.io/prometheus/node-exporter:v1.8.1
+  port: 9100
+
+# -----------------------------
+# cAdvisor
+# -----------------------------
+cadvisor:
+  enabled: true
+  image: gcr.io/cadvisor/cadvisor:v0.49.2
+  port: 8080
+
+# -----------------------------
+# Ingress (optional)
+# -----------------------------
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: rustcost.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

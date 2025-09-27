@@ -1,0 +1,28 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rustcost.fullname" . }}-frontend
+  labels:
+    {{- include "rustcost.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "rustcost.name" . }}-frontend
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "rustcost.name" . }}-frontend
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: rustcost-frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.frontend.service.targetPort }}
+          resources: {}
+{{- end }}

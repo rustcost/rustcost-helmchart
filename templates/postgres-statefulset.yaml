@@ -1,56 +1,54 @@
-{{- if .Values.postgres.enable }}
+{{- if .Values.postgresql.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres
-  namespace: {{ .Release.Namespace | default "rustcost" }}
+  name: {{ include "rustcost.fullname" . }}-postgresql
   labels:
-    app: postgres
+    {{- include "rustcost.labels" . | nindent 4 }}
 spec:
-  serviceName: postgres
+  serviceName: {{ include "rustcost.fullname" . }}-postgresql
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: {{ include "rustcost.name" . }}-postgresql
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: postgres
+        app: {{ include "rustcost.name" . }}-postgresql
+        release: {{ .Release.Name }}
     spec:
       containers:
-        - name: postgres
-          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+        - name: postgresql
+          image: {{ .Values.postgresql.image }}
           ports:
-            - containerPort: {{ .Values.postgres.port }}
+            - containerPort: 5432
+              name: tcp-postgres
           env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "rustcost.fullname" . }}-postgresql
+                  key: POSTGRES_DB
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: rustcost-postgres
+                  name: {{ include "rustcost.fullname" . }}-postgresql
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rustcost-postgres
+                  name: {{ include "rustcost.fullname" . }}-postgresql
                   key: POSTGRES_PASSWORD
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: rustcost-postgres
-                  key: POSTGRES_DB
           volumeMounts:
-            - name: postgres-data
+            - name: data
               mountPath: /var/lib/postgresql/data
-      volumes: []
   volumeClaimTemplates:
     - metadata:
-        name: postgres-data
+        name: data
       spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: {{ .Values.postgres.persistence.size }}
-        {{- if .Values.postgres.persistence.storageClass }}
-        storageClassName: "{{ .Values.postgres.persistence.storageClass }}"
-        {{- end }}
+            storage: {{ .Values.postgresql.persistence.size }}
 {{- end }}

@@ -1,0 +1,64 @@
+{{- if .Values.cadvisor.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "rustcost.fullname" . }}-cadvisor
+  labels:
+    {{- include "rustcost.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "rustcost.name" . }}-cadvisor
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "rustcost.name" . }}-cadvisor
+        release: {{ .Release.Name }}
+    spec:
+      hostPID: true
+      hostNetwork: true
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+      containers:
+        - name: cadvisor
+          image: {{ .Values.cadvisor.image }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.cadvisor.port }}
+              hostPort: {{ .Values.cadvisor.port }}
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: rootfs
+              mountPath: /rootfs
+              readOnly: true
+            - name: var-run
+              mountPath: /var/run
+              readOnly: false
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+            - name: docker
+              mountPath: /var/lib/docker
+              readOnly: true
+      volumes:
+        - name: rootfs
+          hostPath:
+            path: /
+        - name: var-run
+          hostPath:
+            path: /var/run
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: docker
+          hostPath:
+            path: /var/lib/docker
+{{- end }}
