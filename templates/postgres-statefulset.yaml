@@ -40,6 +40,8 @@ spec:
                 secretKeyRef:
                   name: {{ include "rustcost.fullname" . }}-postgresql
                   key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata 
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
