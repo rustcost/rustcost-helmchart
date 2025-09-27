@@ -1,6 +1,6 @@
 # RustCost Helm Chart
 
-**Info · Chart Setup · Publishing · Releases · Downloads · Hub**
+Helm chart to deploy **RustCost** (Axum backend) with optional **React frontend**, **PostgreSQL 17**, and node-level metrics collectors (**node-exporter** + **cAdvisor**).
 
 ---
 
@@ -10,23 +10,116 @@
 
 ---
 
-## How to Use
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffffff', 'primaryBorderColor': '#000000', 'lineColor': '#000000'}}}%%
+   flowchart TD
+       subgraph K8s[Kubernetes Cluster]
+           subgraph Backend
+               R[RustCost Backend Axum]
+           end
+           subgraph Metrics
+               N[Node Exporter DaemonSet]
+               C[cAdvisor DaemonSet]
+           end
+           subgraph Database
+               P[(PostgreSQL 17 StatefulSet)]
+           end
+           subgraph Frontend
+               F[React Frontend Optional]
+           end
+       end
 
-You’ll need [Helm](https://helm.sh/docs/) installed before using this chart.
+       R -->|Scrapes| N
+       R -->|Scrapes| C
+       R -->|Stores Data| P
+       F -->|API Calls| R
+
+```
+
+---
+
+## Usage
+
+Install [Helm](https://helm.sh/docs/intro/install/) first.
 
 Add the repository:
 
 ```bash
 helm repo add rustcost https://rustcost.github.io/rustcost-helmchart
+helm repo update
 ```
 
-Installation details can be found in the [chart guide](https://rustcost.github.io/rustcost-helm-chart).
+Search the chart:
+
+```bash
+helm search repo rustcost
+```
 
 ---
 
-## Running Tests
+## Installation Examples
 
-You can optionally validate the chart with **helm-unittest**.
+### 1. Default install (backend + Postgres + metrics)
+
+```bash
+helm install rustcost rustcost/rustcost \
+  --namespace rustcost \
+  --create-namespace
+```
+
+This deploys:
+
+- RustCost backend (Axum)
+- PostgreSQL 17 (with `rustcost` DB created)
+- Migration Job (`rustcost migrate`)
+- Node Exporter (DaemonSet)
+- cAdvisor (DaemonSet)
+
+---
+
+### 2. Using an external PostgreSQL
+
+Disable bundled Postgres and supply your own secret/connection:
+
+```bash
+helm install rustcost rustcost/rustcost \
+  --namespace rustcost --create-namespace \
+  --set postgresql.enabled=false \
+  --set postgresql.existingSecret=my-db-secret
+```
+
+The secret should contain a `DATABASE_URL`.
+
+---
+
+### 3. Backend only (no DB, no metrics)
+
+```bash
+helm install rustcost rustcost/rustcost \
+  --namespace rustcost --create-namespace \
+  --set postgresql.enabled=false \
+  --set frontend.enabled=false \
+  --set nodeExporter.enabled=false \
+  --set cadvisor.enabled=false
+```
+
+---
+
+### 4. With React frontend
+
+```bash
+helm install rustcost rustcost/rustcost \
+  --namespace rustcost --create-namespace \
+  --set frontend.enabled=true \
+  --set frontend.image.repository=kimc1992/rustcost-frontend \
+  --set frontend.image.tag=latest
+```
+
+---
+
+## Development & Testing
+
+You can validate this chart with **helm-unittest**.
 
 Install the plugin:
 
@@ -34,13 +127,13 @@ Install the plugin:
 helm plugin install https://github.com/helm-unittest/helm-unittest
 ```
 
-Run tests from the repository root:
+Run tests from repo root:
 
 ```bash
 helm unittest charts/rustcost
 ```
 
-Expected output example:
+Expected output:
 
 ```
 ### Chart [ rustcost ] charts/rustcost
@@ -57,66 +150,26 @@ Time:        29ms
 
 ---
 
-Example Installs
+## Notes
 
-1. Basic install with bundled Postgres
-   mkdir rustcost-chart && cd rustcost-chart
+- PostgreSQL defaults to **17.x** (official Docker Hub image).
+- If Postgres is enabled, the chart creates a `rustcost` database and runs migrations automatically.
+- Node Exporter (v1.8.1) and cAdvisor (v0.49.1) are deployed by default.
+- RustCost scrapes metrics directly from node-exporter and cAdvisor (no Prometheus required).
 
-# create chart files in the right structure
+---
 
-helm dependency update ./rustcost-chart # not required now, but good practice
-helm install rustcost ./rustcost-chart --create-namespace --namespace rustcost
+## Related
 
-2. Using an external Postgres
+- [RustCost Project](https://github.com/rustcost)
+- [Docker Hub – RustCost](https://hub.docker.com/repository/docker/kimc1992/rustcost/general)
+- [Docker Hub – PostgreSQL](https://hub.docker.com/_/postgres)
+- [Node Exporter](https://github.com/prometheus/node_exporter)
+- [cAdvisor](https://github.com/google/cadvisor)
 
-Disable the bundled database and provide your own connection string:
-
-```
-helm install rustcost ./rustcost-chart \
- --namespace rustcost --create-namespace \
- --set postgres.enable=false \
- --set externalDatabase.enabled=true \
- --set externalDatabase.url="postgres://id:pwd@127.0.0.1:35001/rustcost" \
- --set app.port="5000" \
- --set app.host="127.0.0.1"
-```
-
-3. Integrating with Prometheus (recommended)
-
-Point the app to an existing Prometheus in your cluster:
-
-```
-helm install rustcost ./rustcost-chart \
- --namespace rustcost --create-namespace \
- --set metrics.prometheus.enabled=true \
- --set metrics.prometheus.url="http://prometheus-k8s.monitoring.svc:9090"
-```
-
-This sets PROMETHEUS_URL in the pod. Your app can query node metrics with PromQL (e.g., node_cpu_seconds_total, node_memory_MemAvailable_bytes).
-
-4. Prometheus Operator with ServiceMonitor
-
-If you run Prometheus Operator, enable a ServiceMonitor so Prometheus scrapes node-exporter:
-
-```
-helm install rustcost ./rustcost-chart \
- --set metrics.prometheusServiceMonitor.enabled=true \
- --set metrics.prometheusServiceMonitor.namespace=monitoring
-```
-
-5. Deploying node-exporter via this chart (optional)
-
-Not recommended if you already run node-exporter cluster-wide:
-
-```
-helm install rustcost ./rustcost-chart \
- --set nodeExporter.deploy=true \
- --set metrics.prometheusServiceMonitor.enabled=true \
- --set metrics.prometheusServiceMonitor.namespace=monitoring
 ```
 
 ---
 
-## Related Resources
-
-- [RustCost Project](https://github.com/orgs/rustcost)
+👉 Do you want me to also include a **diagram** (architecture: Rustcost backend → node-exporter + cAdvisor → Postgres DB) in the README, or keep it purely text-based?
+```
