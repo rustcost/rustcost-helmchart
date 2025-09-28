@@ -17,7 +17,7 @@ spec:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["./rustcost"]
+          command: ["rustcost"]
           args: ["migrate"]   # assumes your binary supports `migrate` command
           env:
             - name: DATABASE_URL
