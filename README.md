@@ -169,7 +169,4 @@ Time:        29ms
 
 ```
 
----
-
-👉 Do you want me to also include a **diagram** (architecture: Rustcost backend → node-exporter + cAdvisor → Postgres DB) in the README, or keep it purely text-based?
 ```
