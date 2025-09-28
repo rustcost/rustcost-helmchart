@@ -22,6 +22,12 @@ spec:
       tolerations:
         - effect: NoSchedule
           operator: Exists
+      securityContext:
+        sysctls:
+          - name: fs.inotify.max_user_instances
+            value: "8192"
+          - name: fs.inotify.max_user_watches
+            value: "524288"
       containers:
         - name: cadvisor
           image: {{ .Values.cadvisor.image }}
@@ -43,6 +49,12 @@ spec:
             limits:
               cpu: "200m"
               memory: "512Mi"
+          # Add ulimits
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "ulimit -n 65535"]
+
           volumeMounts:
             - name: rootfs
               mountPath: /rootfs
@@ -68,9 +80,6 @@ spec:
         - name: sys
           hostPath:
             path: /sys
-        - name: docker
-          hostPath:
-            path: /var/lib/docker
         - name: cgroup
           hostPath:
             path: /sys/fs/cgroup
