@@ -22,8 +22,6 @@ spec:
           args: ["migrate"]   # assumes your binary supports `migrate` command
           env:
             - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "rustcost.fullname" . }}-postgresql
-                  key: DATABASE_URL
+              value: "postgres://{{ .Values.postgresql.username }}:{{ .Values.postgresql.password }}@{{ include "rustcost.fullname" . }}-postgresql:5432/{{ .Values.postgresql.database }}"
+
 {{- end }}

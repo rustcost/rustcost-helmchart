@@ -23,10 +23,7 @@ spec:
               containerPort: {{ .Values.service.targetPort }}
           env:
             - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ if .Values.postgresql.enabled }}{{ include "rustcost.fullname" . }}-postgresql{{ else }}{{ .Values.postgresql.existingSecret | default "postgres-secret" }}{{ end }}
-                  key: DATABASE_URL
+              value: "postgres://{{ .Values.postgresql.username }}:{{ .Values.postgresql.password }}@{{ include "rustcost.fullname" . }}-postgresql:5432/{{ .Values.postgresql.database }}"
             - name: NODE_EXPORTER_URLS
               value: "http://{{ include "rustcost.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
             - name: CADVISOR_URLS
