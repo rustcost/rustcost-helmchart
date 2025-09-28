@@ -18,12 +18,20 @@ spec:
     spec:
       hostPID: true
       hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       tolerations:
         - effect: NoSchedule
           operator: Exists
       containers:
         - name: cadvisor
           image: {{ .Values.cadvisor.image }}
+          securityContext:
+            privileged: true
+          args:
+            - --housekeeping_interval=10s
+            - --max_housekeeping_interval=15s
+            - --containerd=/run/containerd/containerd.sock   # ✅ modern k8s uses containerd
+            - --docker_only=false
           ports:
             - name: metrics
               containerPort: {{ .Values.cadvisor.port }}
@@ -41,12 +49,14 @@ spec:
               readOnly: true
             - name: var-run
               mountPath: /var/run
-              readOnly: false
             - name: sys
               mountPath: /sys
               readOnly: true
             - name: docker
               mountPath: /var/lib/docker
+              readOnly: true
+            - name: cgroup
+              mountPath: /cgroup
               readOnly: true
       volumes:
         - name: rootfs
@@ -61,4 +71,7 @@ spec:
         - name: docker
           hostPath:
             path: /var/lib/docker
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
 {{- end }}
