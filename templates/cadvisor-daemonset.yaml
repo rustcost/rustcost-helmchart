@@ -64,9 +64,6 @@ spec:
             - name: sys
               mountPath: /sys
               readOnly: true
-            - name: docker
-              mountPath: /var/lib/docker
-              readOnly: true
             - name: cgroup
               mountPath: /cgroup
               readOnly: true
