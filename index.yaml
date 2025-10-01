@@ -3,11 +3,11 @@ entries:
   rustcost:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2025-10-01T13:18:48.798462355Z"
+    created: "2025-10-01T16:49:42.396581944Z"
     description: A Helm chart for deploying Rustcost (Axum backend, optional React
       frontend, optional PostgreSQL, and node-level metrics collectors like node-exporter
       and cAdvisor)
-    digest: b7ad1f57492907ed5c9000e4e85db047d2124acef042f206ec4c1bd78cb87f58
+    digest: 05859dd2dd787783c63b939a5f1618fe21004d7c326cb8d2eddba0cd1fbe837f
     keywords:
     - rust
     - axum
@@ -22,4 +22,4 @@ entries:
     urls:
     - https://rustcost.github.io/rustcost-helmchart/rustcost-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-01T13:18:48.796760785Z"
+generated: "2025-10-01T16:49:42.391998602Z"
