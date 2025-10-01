@@ -23,11 +23,18 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
           env:
+            # Use DATABASE_URL from the same secret the PostgreSQL StatefulSet uses
             - name: DATABASE_URL
-              value: "postgres://{{ .Values.postgresql.username }}:{{ .Values.postgresql.password }}@{{ include "rustcost.fullname" . }}-postgresql:5432/{{ .Values.postgresql.database }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "rustcost.fullname" . }}-postgresql
+                  key: DATABASE_URL
+
             - name: NODE_EXPORTER_URLS
               value: "http://{{ include "rustcost.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
+
             - name: CADVISOR_URLS
               value: "http://{{ include "rustcost.fullname" . }}-cadvisor:{{ .Values.cadvisor.port }}/metrics"
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
