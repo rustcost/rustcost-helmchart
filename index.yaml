@@ -1,46 +1,26 @@
 apiVersion: v1
 entries:
   rustcost:
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2025-10-01T17:41:18.896097262Z"
-    description: A Helm chart for deploying Rustcost (Axum backend, optional React
-      frontend, optional PostgreSQL, and node-level metrics collectors like node-exporter
-      and cAdvisor)
-    digest: 50b688a804a3fbad00072a339831b34429baeacb389d61dbc8f9749ab2da404c
-    keywords:
-    - rust
-    - axum
-    - monitoring
-    - node-exporter
-    - cadvisor
-    - postgres
-    name: rustcost
-    sources:
-    - https://github.com/rustcost/rustcost-helmchart
-    type: application
-    urls:
-    - rustcost-0.1.1.tgz
-    version: 0.1.1
-  - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2025-10-01T17:41:18.895096394Z"
-    description: A Helm chart for deploying Rustcost (Axum backend, optional React
-      frontend, optional PostgreSQL, and node-level metrics collectors like node-exporter
-      and cAdvisor)
-    digest: 18b0692e063c2b4ae6c3e93a2d8a3ad29219b071093c1639ff6ad8c5bd399004
-    keywords:
-    - rust
-    - axum
-    - monitoring
-    - node-exporter
-    - cadvisor
-    - postgres
-    name: rustcost
-    sources:
-    - https://github.com/rustcost/rustcost-helmchart
-    type: application
-    urls:
-    - rustcost-0.1.0.tgz
-    version: 0.1.0
+    - apiVersion: v2
+      appVersion: 0.1.0
+      created: "2025-10-01T17:41:18.895096394Z"
+      description:
+        A Helm chart for deploying Rustcost (Axum backend, optional React
+        frontend, optional PostgreSQL, and node-level metrics collectors like node-exporter
+        and cAdvisor)
+      digest: 18b0692e063c2b4ae6c3e93a2d8a3ad29219b071093c1639ff6ad8c5bd399004
+      keywords:
+        - rust
+        - axum
+        - monitoring
+        - node-exporter
+        - cadvisor
+        - postgres
+      name: rustcost
+      sources:
+        - https://github.com/rustcost/rustcost-helmchart
+      type: application
+      urls:
+        - rustcost-0.1.0.tgz
+      version: 0.1.0
 generated: "2025-10-01T17:41:18.887961503Z"
