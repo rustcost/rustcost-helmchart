@@ -1,0 +1,9 @@
+.git/
+*.tgz
+charts/
+Dockerfile
+docker-compose*
+*.md
+tests/
+migrations/
+node_modules/
