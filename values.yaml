@@ -81,3 +81,9 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
+
+rbac:
+  create: true
+  serviceAccount:
+    create: true
+    name: ""
