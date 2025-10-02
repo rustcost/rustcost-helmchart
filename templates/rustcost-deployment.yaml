@@ -15,6 +15,16 @@ spec:
         {{- include "rustcost.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "rustcost.fullname" . }}
+      initContainers:
+        - name: wait-for-migrations
+          image: bitnami/kubectl:latest   # lightweight kubectl image
+          command:
+            - sh
+            - -c
+            - >
+              until [ "$(kubectl get job {{ include "rustcost.fullname" . }}-migrations
+                -n {{ .Release.Namespace }} -o jsonpath='{.status.succeeded}' 2>/dev/null)" = "1" ];
+              do echo "waiting for migrations to complete..."; sleep 5; done
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -23,7 +33,6 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
           env:
-            # Use DATABASE_URL from the same secret the PostgreSQL StatefulSet uses
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
