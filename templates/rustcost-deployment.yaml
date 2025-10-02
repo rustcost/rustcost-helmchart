@@ -15,6 +15,25 @@ spec:
         {{- include "rustcost.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "rustcost.fullname" . }}
+
+      initContainers:
+        - name: wait-for-postgres
+          image: alpine:3.19
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache postgresql-client
+              until psql "$DATABASE_URL" -c "SELECT 1;" >/dev/null 2>&1; do
+                echo "waiting for postgres..."
+                sleep 1
+              done
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "rustcost.fullname" . }}-postgresql
+                  key: DATABASE_URL
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
