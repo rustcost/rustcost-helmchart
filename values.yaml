@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: kimc1992/rustcost
   tag: "latest"
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 service:
   type: ClusterIP
