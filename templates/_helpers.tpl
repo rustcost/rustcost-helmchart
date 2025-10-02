@@ -46,3 +46,20 @@ Selector labels (used in Deployment/Service selectors)
 app.kubernetes.io/name: {{ include "rustcost.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+
+{{/*
+logging
+*/}}
+{{- define "rustcost.rustlog" -}}
+{{- $base := (.Values.logging.level | default "info") -}}
+{{- $mods := list -}}
+{{- range $k, $v := .Values.logging.moduleLevels }}
+  {{- $mods = append $mods (printf "%s=%s" $k $v) -}}
+{{- end -}}
+{{- if gt (len $mods) 0 -}}
+{{- printf "%s,%s" $base (join "," $mods) -}}
+{{- else -}}
+{{- $base -}}
+{{- end -}}
+{{- end -}}

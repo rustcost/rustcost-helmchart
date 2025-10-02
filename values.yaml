@@ -2,6 +2,13 @@
 replicaCount: 1
 
 # -----------------------------
+# Logging
+# -----------------------------
+logging:
+  level: warn
+  moduleLevels: {}
+
+# -----------------------------
 # Rustcost Backend (Axum)
 # -----------------------------
 image:
@@ -15,6 +22,7 @@ service:
   targetPort: 8080
 
 resources: {}
+
 # Example:
 # resources:
 #   requests:
