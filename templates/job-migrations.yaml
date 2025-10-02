@@ -23,7 +23,7 @@ spec:
           command:
             - sh
             - -c
-            - "until nc -z {{ include \"rustcost.fullname\" . }}-postgresql 5432; do echo waiting for postgres...; sleep 5; done"
+            - 'until nc -z {{ include "rustcost.fullname" . }}-postgresql 5432; do echo "waiting for postgres..."; sleep 5; done'
       containers:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -32,5 +32,5 @@ spec:
           args: ["migrate"]
           env:
             - name: DATABASE_URL
-              value: "postgres://{{ .Values.postgresql.username }}:{{ .Values.postgresql.password }}@{{ include \"rustcost.fullname\" . }}-postgresql:5432/{{ .Values.postgresql.database }}"
+              value: "postgres://{{ .Values.postgresql.username }}:{{ .Values.postgresql.password }}@{{ include "rustcost.fullname" . }}-postgresql:5432/{{ .Values.postgresql.database }}"
 {{- end }}
