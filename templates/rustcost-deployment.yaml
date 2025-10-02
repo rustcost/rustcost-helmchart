@@ -17,14 +17,25 @@ spec:
       serviceAccountName: {{ include "rustcost.fullname" . }}
       initContainers:
         - name: wait-for-migrations
-          image: bitnami/kubectl:latest   # lightweight kubectl image
+          image: alpine:3.19
           command:
             - sh
             - -c
             - >
-              until [ "$(kubectl get job {{ include "rustcost.fullname" . }}-migrations
-                -n {{ .Release.Namespace }} -o jsonpath='{.status.succeeded}' 2>/dev/null)" = "1" ];
-              do echo "waiting for migrations to complete..."; sleep 5; done
+              apk add --no-cache postgresql-client &&
+              for i in $(seq 1 60); do
+                psql "$DATABASE_URL" -c "SELECT 1 FROM __diesel_schema_migrations;" >/dev/null 2>&1 && exit 0;
+                echo "waiting for migrations... ($i/60)";
+                sleep 5;
+              done;
+              echo "migrations not ready after 5 minutes, exiting";
+              exit 1
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "rustcost.fullname" . }}-postgresql
+                  key: DATABASE_URL
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
