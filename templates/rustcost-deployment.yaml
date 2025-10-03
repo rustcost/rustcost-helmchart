@@ -57,6 +57,9 @@ spec:
             # Enable debug logs for Diesel + tracing
             - name: RUST_LOG
               value: {{ include "rustcost.rustlog" . | quote }}
+
+            - name: HOST
+              value: "0.0.0.0"
               
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
