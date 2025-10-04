@@ -58,7 +58,7 @@ frontend:
   service:
     type: ClusterIP
     port: 80
-    targetPort: 80
+    targetPort: 8080
   env:
     VITE_BACKEND_URL: "http://rustcost:80"
 
