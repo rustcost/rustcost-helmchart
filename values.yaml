@@ -60,7 +60,7 @@ frontend:
     port: 80
     targetPort: 8080
   env:
-    VITE_BACKEND_URL: "http://rustcost:80"
+    VITE_BACKEND_URL: "http://rustcost:80" # Currently statically set when image is built
 
 # -----------------------------
 # Node Exporter
