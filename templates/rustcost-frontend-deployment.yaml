@@ -24,5 +24,8 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.frontend.service.targetPort }}
+          env:
+            - name: VITE_BACKEND_URL
+              value: {{ .Values.frontend.env.VITE_BACKEND_URL | quote }}
           resources: {}
 {{- end }}

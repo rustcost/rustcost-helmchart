@@ -59,6 +59,8 @@ frontend:
     type: ClusterIP
     port: 80
     targetPort: 80
+  env:
+    VITE_BACKEND_URL: "http://rustcost:80"
 
 # -----------------------------
 # Node Exporter
