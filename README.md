@@ -38,6 +38,23 @@ Helm chart to deploy **RustCost** (Axum backend) with optional **React frontend*
 
 ---
 
+### ROADMAP / TODO
+
+RustCost is an evolving project. While the current Helm chart provides a functional deployment of the backend, optional frontend, PostgreSQL, and node-level collectors, there are several areas we aim to explore and improve over time:
+
+1. **Lightweight storage options**  
+   Replace PostgreSQL as the primary persistence layer with a lightweight file-based system that uses minimal memory/CPU
+
+2. **Secure and efficient metrics collection**  
+   Explore replacing or complementing cAdvisor and node exporter with a Rust-native metrics exporter to improve security, reduce dependencies, and simplify integration.
+
+3. **Intelligent reporting & alerting**  
+   Add cost anomaly detection, forecasting, and alerting using AI/ML techniques to provide actionable FinOps insights out of the box.
+4. **Landing page & docs site**  
+   Build a clean landing page (e.g., GitHub Pages or a static site) that introduces RustCost, explains use cases, and guides new users with quickstart docs, architecture diagrams, and community links.
+
+---
+
 ## Usage
 
 Install [Helm](https://helm.sh/docs/intro/install/) first.
