@@ -50,8 +50,12 @@ RustCost is an evolving project. While the current Helm chart provides a functio
 
 3. **Intelligent reporting & alerting**  
    Add cost anomaly detection, forecasting, and alerting using AI/ML techniques to provide actionable FinOps insights out of the box.
+
 4. **Landing page & docs site**  
    Build a clean landing page (e.g., GitHub Pages or a static site) that introduces RustCost, explains use cases, and guides new users with quickstart docs, architecture diagrams, and community links.
+
+5. **Data retention policy**  
+   Add configurable retention (e.g., delete data older than N days, default 30) to prevent unbounded growth of metrics tables/logs and keep memory/CPU usage predictable.
 
 ---
 
