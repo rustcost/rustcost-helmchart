@@ -83,9 +83,9 @@ helm search repo rustcost
 ### 1. Default install (backend + Postgres + metrics)
 
 ```bash
-helm install rustcost rustcost/rustcost \
-  --namespace rustcost \
-  --create-namespace
+helm repo add rustcost https://rustcost.github.io/rustcost-helmchart/
+helm repo update
+helm upgrade --install rustcost rustcost/rustcost -n rustcost --create-namespace
 ```
 
 This deploys:
