@@ -4,21 +4,22 @@ kind: ClusterRole
 metadata:
   name: {{ include "rustcost.fullname" . }}
   labels:
-    app: {{ include "rustcost.name" . }}
-    release: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ include "rustcost.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "rustcost.chart" . }}
 rules:
   - apiGroups: [""]
     resources:
       - pods
       - nodes
+      - nodes/status
+      - nodes/proxy
     verbs: ["get", "list", "watch"]
+
   - apiGroups: ["metrics.k8s.io"]
     resources:
       - pods
       - nodes
     verbs: ["get", "list"]
-  - apiGroups: [""]
-    resources:
-      - nodes/status
-    verbs: ["get"]
 {{- end }}
