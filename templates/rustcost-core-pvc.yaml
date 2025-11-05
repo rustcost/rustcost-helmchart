@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "rustcost-core.fullname" . }}-pvc
+  labels:
+    {{- include "rustcost-core.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce   # typical for local PVs
+  resources:
+    requests:
+      storage: {{ .Values.storage.size | default "5Gi" }}
+  storageClassName: {{ .Values.storage.className | default "" }}

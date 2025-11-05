@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "rustcost-core.fullname" . }}
+  labels:
+    {{- include "rustcost-core.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "rustcost-core.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "rustcost-core.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "rustcost-core.fullname" . }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: NODE_EXPORTER_URLS
+              value: "http://{{ include "rustcost-core.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
+
+            - name: CADVISOR_URLS
+              value: "http://{{ include "rustcost-core.fullname" . }}-cadvisor:{{ .Values.cadvisor.port }}/metrics"
+
+            - name: RUST_LOG
+              value: {{ include "rustcost-core.rustlog" . | quote }}
+
+            - name: HOST
+              value: "0.0.0.0"
+
+          volumeMounts:
+            - name: data
+              mountPath: /app/data   # or wherever your app expects 'data/'
+              
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "rustcost-core.fullname" . }}-pvc
