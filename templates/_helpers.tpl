@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "rustcost.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+rustcost-core
 {{- end }}
 
 {{/*
@@ -12,12 +12,7 @@ Create a default fully qualified app name.
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- printf "%s-%s" .Release.Name "rustcost-core" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 
@@ -33,7 +28,7 @@ Common labels
 */}}
 {{- define "rustcost.labels" -}}
 helm.sh/chart: {{ include "rustcost.chart" . }}
-app.kubernetes.io/name: {{ include "rustcost.name" . }}
+app.kubernetes.io/name: rustcost-core
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -43,13 +38,12 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels (used in Deployment/Service selectors)
 */}}
 {{- define "rustcost.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "rustcost.name" . }}
+app.kubernetes.io/name: rustcost-core
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-
 {{/*
-logging
+Logging level builder
 */}}
 {{- define "rustcost.rustlog" -}}
 {{- $base := (.Values.logging.level | default "info") -}}
