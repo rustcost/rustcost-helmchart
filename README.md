@@ -132,7 +132,7 @@ helm install rustcost rustcost/rustcost \
 helm install rustcost rustcost/rustcost \
   --namespace rustcost --create-namespace \
   --set frontend.enabled=true \
-  --set frontend.image.repository=kimc1992/rustcost-frontend \
+  --set frontend.image.repository=kimc1992/rustcost-dashboard \
   --set frontend.image.tag=latest
 ```
 

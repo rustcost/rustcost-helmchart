@@ -12,8 +12,8 @@ logging:
 # Rustcost Backend (Axum)
 # -----------------------------
 image:
-  repository: kimc1992/rustcost
-  tag: "latest"
+  repository: kimc1992/rustcost-core
+  tag: "0.0.1-prototype"
   pullPolicy: Always
 
 service:
@@ -52,8 +52,8 @@ postgresql:
 frontend:
   enabled: true
   image:
-    repository: kimc1992/rustcost-frontend
-    tag: "latest"
+    repository: kimc1992/rustcost-dashboard
+    tag: "0.0.1-prototype"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
