@@ -5,18 +5,16 @@ description: A Helm chart for deploying Rustcost (Axum backend, optional React f
 type: application
 
 # Chart version (increment this when you change templates)
-version: 0.1.1
+version: 1.0.0-dev.1
 
 # App version (matches your Rustcost release, or "latest" if dev)
-appVersion: "0.1.0"
+appVersion: "1.0.0-dev.1"
 
 keywords:
   - rust
   - axum
   - monitoring
   - node-exporter
-  - cadvisor
-  - postgres
 
 sources:
   - https://github.com/rustcost/rustcost-helmchart
