@@ -1,3 +1,9 @@
+# ------------------------------------------------
+# Project: Rustcost
+# Backend: rustcost-core (Axum)
+# Dashboard: rustcost-dashboard (React)
+# ------------------------------------------------
+
 # Number of backend replicas
 replicaCount: 1
 
@@ -9,7 +15,7 @@ logging:
   moduleLevels: {}
 
 # -----------------------------
-# Rustcost Backend (Axum)
+# Backend (rustcost-core)
 # -----------------------------
 image:
   repository: kimc1992/rustcost-core
@@ -22,7 +28,6 @@ service:
   targetPort: 3000
 
 resources: {}
-
 # Example:
 # resources:
 #   requests:
@@ -33,23 +38,18 @@ resources: {}
 #     memory: "512Mi"
 
 # -----------------------------
-# PostgreSQL (optional)
+# Persistence (for local data dir)
 # -----------------------------
-postgresql:
+persistence:
   enabled: true
-  image: postgres:17
-  username: rustcost
-  password: rustcostpassword
-  database: rustcost
-  persistence:
-    enabled: true
-    size: 1Gi
-  runMigrations: true # run job-migrations.yaml if enabled
+  size: 5Gi
+  storageClass: "" # leave empty to use cluster default
+  mountPath: /app/data
 
 # -----------------------------
-# Frontend (React, optional)
+# Dashboard (rustcost-dashboard)
 # -----------------------------
-frontend:
+dashboard:
   enabled: true
   image:
     repository: kimc1992/rustcost-dashboard
@@ -60,23 +60,15 @@ frontend:
     port: 80
     targetPort: 8080
   env:
-    VITE_BACKEND_URL: "http://rustcost:80" # Currently statically set when image is built
+    VITE_BACKEND_URL: "http://rustcost-core:80" # updated backend reference
 
 # -----------------------------
-# Node Exporter
+# Node Exporter (optional)
 # -----------------------------
 nodeExporter:
   enabled: false
   image: quay.io/prometheus/node-exporter:v1.8.1
   port: 9100
-
-# -----------------------------
-# cAdvisor
-# -----------------------------
-cadvisor:
-  enabled: false
-  image: gcr.io/cadvisor/cadvisor:v0.49.2
-  port: 8080
 
 # -----------------------------
 # Ingress (optional)
@@ -92,6 +84,9 @@ ingress:
           pathType: Prefix
   tls: []
 
+# -----------------------------
+# RBAC / Service Account
+# -----------------------------
 rbac:
   create: true
   serviceAccount:
