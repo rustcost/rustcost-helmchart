@@ -15,6 +15,7 @@ rules:
       - nodes
       - nodes/status
       - nodes/proxy
+      - namespaces
     verbs: ["get", "list", "watch"]
 
   - apiGroups: ["metrics.k8s.io"]
