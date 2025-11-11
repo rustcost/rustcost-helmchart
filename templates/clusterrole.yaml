@@ -9,18 +9,49 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rustcost.chart" . }}
 rules:
+  # --- Core Kubernetes Objects ---
   - apiGroups: [""]
     resources:
       - pods
+      - pods/status
       - nodes
       - nodes/status
       - nodes/proxy
       - namespaces
+      - resourcequotas
+      - limitranges
     verbs: ["get", "list", "watch"]
 
+  # --- Storage Resources (for cost calculation) ---
+  - apiGroups: [""]
+    resources:
+      - persistentvolumes
+      - persistentvolumeclaims
+    verbs: ["get", "list", "watch"]
+
+  # --- Metrics API (for usage and cost analysis) ---
   - apiGroups: ["metrics.k8s.io"]
     resources:
       - pods
       - nodes
     verbs: ["get", "list"]
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+    verbs: ["get", "list", "watch"]
+
+  # --- Autoscaling Resources (for scaling-based cost) ---
+  - apiGroups: ["autoscaling"]
+    resources:
+      - horizontalpodautoscalers
+    verbs: ["get", "list", "watch"]
+
+  # --- (Optional) Networking for ingress/egress cost ---
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+      - networkpolicies
+    verbs: ["get", "list", "watch"]
 {{- end }}
