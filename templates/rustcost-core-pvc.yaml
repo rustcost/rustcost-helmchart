@@ -1,3 +1,4 @@
+{{- if (.Values.persistence.enabled | default false) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,8 +7,9 @@ metadata:
     {{- include "rustcost.labels" . | nindent 4 }}
 spec:
   accessModes:
-    - ReadWriteOnce   # typical for local PVs
+    - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.storage.size | default "5Gi" }}
-  storageClassName: {{ .Values.storage.className | default "" }}
+      storage: {{ .Values.persistence.size | default "5Gi" }}
+  storageClassName: {{ .Values.persistence.storageClass | default "" }}
+{{- end }}
