@@ -27,8 +27,10 @@ spec:
             - name: NODE_EXPORTER_URLS
               value: "http://{{ include "rustcost-core.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
 
+            {{- if .Values.cadvisor.enabled }}
             - name: CADVISOR_URLS
-              value: "http://{{ include "rustcost-core.fullname" . }}-cadvisor:{{ .Values.cadvisor.port }}/metrics"
+              value: "http://{{ default (printf "%s-cadvisor" (include "rustcost-core.fullname" .)) .Values.cadvisor.serviceName }}:{{ .Values.cadvisor.port }}/metrics"
+            {{- end }}
 
             - name: RUST_LOG
               value: {{ include "rustcost-core.rustlog" . | quote }}

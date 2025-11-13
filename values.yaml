@@ -71,6 +71,14 @@ nodeExporter:
   port: 9100
 
 # -----------------------------
+# cAdvisor (optional external collector)
+# -----------------------------
+cadvisor:
+  enabled: false
+  serviceName: ""   # override if you already run a shared cadvisor service
+  port: 4194
+
+# -----------------------------
 # Ingress (optional)
 # -----------------------------
 ingress:
