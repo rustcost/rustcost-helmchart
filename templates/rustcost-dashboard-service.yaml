@@ -1,18 +1,18 @@
-{{- if .Values.frontend.enabled }}
+{{- if (.Values.dashboard.enabled | default false) }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "rustcost.fullname" . }}-frontend
+  name: {{ include "rustcost.fullname" . }}-dashboard
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.frontend.service.type }}
+  type: {{ .Values.dashboard.service.type }}
   ports:
-    - port: {{ .Values.frontend.service.port }}
-      targetPort: {{ .Values.frontend.service.targetPort }}
+    - port: {{ .Values.dashboard.service.port }}
+      targetPort: {{ .Values.dashboard.service.targetPort }}
       protocol: TCP
       name: http
   selector:
-    app: {{ include "rustcost.name" . }}-frontend
+    app: {{ include "rustcost.name" . }}-dashboard
     release: {{ .Release.Name }}
 {{- end }}

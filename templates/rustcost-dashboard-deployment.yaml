@@ -1,31 +1,31 @@
-{{- if .Values.frontend.enabled }}
+{{- if (.Values.dashboard.enabled | default false) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rustcost.fullname" . }}-frontend
+  name: {{ include "rustcost.fullname" . }}-dashboard
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "rustcost.name" . }}-frontend
+      app: {{ include "rustcost.name" . }}-dashboard
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "rustcost.name" . }}-frontend
+        app: {{ include "rustcost.name" . }}-dashboard
         release: {{ .Release.Name }}
     spec:
       containers:
         - name: rustcost-dashboard
-          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          image: "{{ .Values.dashboard.image.repository }}:{{ .Values.dashboard.image.tag }}"
+          imagePullPolicy: {{ .Values.dashboard.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.frontend.service.targetPort }}
+              containerPort: {{ .Values.dashboard.service.targetPort }}
           env:
             - name: VITE_BACKEND_URL
-              value: {{ .Values.frontend.env.VITE_BACKEND_URL | quote }}
+              value: {{ .Values.dashboard.env.VITE_BACKEND_URL | quote }}
           resources: {}
 {{- end }}
