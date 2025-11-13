@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rustcost-core.fullname" . }}
+  name: {{ include "rustcost.fullname" . }}
   labels:
-    {{- include "rustcost-core.labels" . | nindent 4 }}
+    {{- include "rustcost.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "rustcost-core.selectorLabels" . | nindent 6 }}
+      {{- include "rustcost.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "rustcost-core.selectorLabels" . | nindent 8 }}
+        {{- include "rustcost.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "rustcost-core.fullname" . }}
+      serviceAccountName: {{ include "rustcost.fullname" . }}
 
       containers:
         - name: {{ .Chart.Name }}
@@ -25,15 +25,15 @@ spec:
               containerPort: {{ .Values.service.targetPort }}
           env:
             - name: NODE_EXPORTER_URLS
-              value: "http://{{ include "rustcost-core.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
+              value: "http://{{ include "rustcost.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
 
             {{- if .Values.cadvisor.enabled }}
             - name: CADVISOR_URLS
-              value: "http://{{ default (printf "%s-cadvisor" (include "rustcost-core.fullname" .)) .Values.cadvisor.serviceName }}:{{ .Values.cadvisor.port }}/metrics"
+              value: "http://{{ default (printf "%s-cadvisor" (include "rustcost.fullname" .)) .Values.cadvisor.serviceName }}:{{ .Values.cadvisor.port }}/metrics"
             {{- end }}
 
             - name: RUST_LOG
-              value: {{ include "rustcost-core.rustlog" . | quote }}
+              value: {{ include "rustcost.rustlog" . | quote }}
 
             - name: HOST
               value: "0.0.0.0"
@@ -48,4 +48,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "rustcost-core.fullname" . }}-pvc
+            claimName: {{ include "rustcost.fullname" . }}-pvc

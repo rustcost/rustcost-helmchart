@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "rustcost-core.fullname" . }}-pvc
+  name: {{ include "rustcost.fullname" . }}-pvc
   labels:
-    {{- include "rustcost-core.labels" . | nindent 4 }}
+    {{- include "rustcost.labels" . | nindent 4 }}
 spec:
   accessModes:
     - ReadWriteOnce   # typical for local PVs

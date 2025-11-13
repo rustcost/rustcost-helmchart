@@ -58,21 +58,3 @@ Logging level builder
 {{- end -}}
 {{- end -}}
 
-{{/*
-Compatibility helpers for legacy rustcost-core.* includes
-*/}}
-{{- define "rustcost-core.fullname" -}}
-{{ include "rustcost.fullname" . }}
-{{- end -}}
-
-{{- define "rustcost-core.labels" -}}
-{{ include "rustcost.labels" . }}
-{{- end -}}
-
-{{- define "rustcost-core.selectorLabels" -}}
-{{ include "rustcost.selectorLabels" . }}
-{{- end -}}
-
-{{- define "rustcost-core.rustlog" -}}
-{{ include "rustcost.rustlog" . }}
-{{- end -}}
