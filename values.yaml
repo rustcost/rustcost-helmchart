@@ -19,7 +19,7 @@ logging:
 # -----------------------------
 image:
   repository: kimc1992/rustcost-core
-  tag: "0.0.1-prototype"
+  tag: "1.0.0-dev.2"
   pullPolicy: Always
 
 service:
@@ -75,7 +75,7 @@ nodeExporter:
 # -----------------------------
 cadvisor:
   enabled: false
-  serviceName: ""   # override if you already run a shared cadvisor service
+  serviceName: "" # override if you already run a shared cadvisor service
   port: 4194
 
 # -----------------------------
