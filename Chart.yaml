@@ -8,7 +8,7 @@ type: application
 version: 1.0.0-dev.1
 
 # App version (matches your Rustcost release, or "latest" if dev)
-appVersion: "1.0.0-dev.1"
+appVersion: "1.0.0-dev.2"
 
 keywords:
   - rust
