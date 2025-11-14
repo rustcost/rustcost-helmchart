@@ -5,10 +5,10 @@ description: A Helm chart for deploying Rustcost (Axum backend, optional React f
 type: application
 
 # Chart version (increment this when you change templates)
-version: 1.0.0-dev.2
+version: 1.0.0-dev.11
 
 # App version (matches your Rustcost release, or "latest" if dev)
-appVersion: "1.0.0-dev.2"
+appVersion: "1.0.0-dev.11"
 
 keywords:
   - rust

@@ -16,6 +16,9 @@ spec:
     spec:
       serviceAccountName: {{ include "rustcost.fullname" . }}
 
+      securityContext:
+        fsGroup: 1000     # ← REQUIRED so the container can write to the PVC
+
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -40,8 +43,8 @@ spec:
 
           volumeMounts:
             - name: data
-              mountPath: /app/data   # or wherever your app expects 'data/'
-              
+              mountPath: /app/data   # PVC mounted here
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 
