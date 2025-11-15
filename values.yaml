@@ -19,7 +19,7 @@ logging:
 # -----------------------------
 image:
   repository: kimc1992/rustcost-core
-  tag: "1.0.0-dev.12"
+  tag: "1.0.0-dev.13"
   pullPolicy: Always
 
 service:
