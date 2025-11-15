@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "rustcost.fullname" . }}
+  name: {{ include "rustcost.fullname" . }}-core-svc
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
 spec:

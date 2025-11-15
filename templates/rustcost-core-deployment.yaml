@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rustcost.fullname" . }}
+  name: {{ include "rustcost.fullname" . }}-core-deploy
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
 spec:
@@ -14,10 +14,10 @@ spec:
       labels:
         {{- include "rustcost.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "rustcost.fullname" . }}
+      serviceAccountName: {{ include "rustcost.fullname" . }}-sa
 
       securityContext:
-        fsGroup: 1000     # ← REQUIRED so the container can write to the PVC
+        fsGroup: 1000
 
       containers:
         - name: {{ .Chart.Name }}
@@ -26,6 +26,7 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
+
           env:
             - name: NODE_EXPORTER_URLS
               value: "http://{{ include "rustcost.fullname" . }}-node-exporter:{{ .Values.nodeExporter.port }}/metrics"
@@ -43,7 +44,7 @@ spec:
 
           volumeMounts:
             - name: data
-              mountPath: /app/data   # PVC mounted here
+              mountPath: /app/data
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

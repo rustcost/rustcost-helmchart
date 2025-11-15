@@ -2,20 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rustcost.fullname" . }}-dashboard
+  name: {{ include "rustcost.fullname" . }}-dashboard-deploy
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
+    component: dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "rustcost.name" . }}-dashboard
-      release: {{ .Release.Name }}
+      {{- include "rustcost.selectorLabels" . | nindent 6 }}
+      component: dashboard
   template:
     metadata:
       labels:
-        app: {{ include "rustcost.name" . }}-dashboard
-        release: {{ .Release.Name }}
+        {{- include "rustcost.selectorLabels" . | nindent 8 }}
+        component: dashboard
     spec:
       containers:
         - name: rustcost-dashboard

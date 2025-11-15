@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "rustcost.fullname" . }}
+  name: {{ include "rustcost.fullname" . }}-ingress
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -23,7 +23,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "rustcost.fullname" $ }}
+                name: {{ include "rustcost.fullname" $ }}-core
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}

@@ -1,13 +1,9 @@
-{{/*
-Expand the name of the app (we deploy rustcost-core)
-*/}}
+{{/* Expand the name of the app */}}
 {{- define "rustcost.name" -}}
-rustcost-core
+{{ .Chart.Name }}
 {{- end }}
 
-{{/*
-Create a default fully qualified app name.
-*/}}
+{{/* Create a default fully qualified app name */}}
 {{- define "rustcost.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}

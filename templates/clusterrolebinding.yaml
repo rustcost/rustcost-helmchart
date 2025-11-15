@@ -2,16 +2,18 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "rustcost.fullname" . }}
+  name: {{ include "rustcost.fullname" . }}-clusterrolebinding
   labels:
-    app: {{ include "rustcost.name" . }}
-    release: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ include "rustcost.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ include "rustcost.chart" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "rustcost.fullname" . }}
+  name: {{ include "rustcost.fullname" . }}-clusterrole
 subjects:
   - kind: ServiceAccount
-    name: {{ include "rustcost.fullname" . }}
+    name: {{ include "rustcost.fullname" . }}-sa
     namespace: {{ .Release.Namespace }}
 {{- end }}

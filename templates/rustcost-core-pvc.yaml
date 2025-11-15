@@ -11,5 +11,7 @@ spec:
   resources:
     requests:
       storage: {{ .Values.persistence.size | default "5Gi" }}
-  storageClassName: {{ .Values.persistence.storageClass | default "" }}
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+  {{- end }}
 {{- end }}

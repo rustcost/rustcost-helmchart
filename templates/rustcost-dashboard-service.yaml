@@ -2,9 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "rustcost.fullname" . }}-dashboard
+  name: {{ include "rustcost.fullname" . }}-dashboard-svc
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
+    component: dashboard
 spec:
   type: {{ .Values.dashboard.service.type }}
   ports:
@@ -13,6 +14,6 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ include "rustcost.name" . }}-dashboard
-    release: {{ .Release.Name }}
+    {{- include "rustcost.selectorLabels" . | nindent 4 }}
+    component: dashboard
 {{- end }}

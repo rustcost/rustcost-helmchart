@@ -19,7 +19,7 @@ logging:
 # -----------------------------
 image:
   repository: kimc1992/rustcost-core
-  tag: "1.0.0-dev.11"
+  tag: "1.0.0-dev.12"
   pullPolicy: Always
 
 service:
@@ -60,7 +60,7 @@ dashboard:
     port: 80
     targetPort: 8080
   env:
-    VITE_BACKEND_URL: "http://rustcost-core:80" # updated backend reference
+    VITE_BACKEND_URL: "http://rustcost-core-svc:80"
 
 # -----------------------------
 # Node Exporter (optional)
@@ -100,3 +100,5 @@ rbac:
   serviceAccount:
     create: true
     name: ""
+
+fullnameOverride: rustcost
