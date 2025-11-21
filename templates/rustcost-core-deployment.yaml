@@ -4,15 +4,18 @@ metadata:
   name: {{ include "rustcost.fullname" . }}-core-deploy
   labels:
     {{- include "rustcost.labels" . | nindent 4 }}
+    component: core
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "rustcost.selectorLabels" . | nindent 6 }}
+      component: core
   template:
     metadata:
       labels:
         {{- include "rustcost.selectorLabels" . | nindent 8 }}
+        component: core
     spec:
       serviceAccountName: {{ include "rustcost.fullname" . }}-sa
 
