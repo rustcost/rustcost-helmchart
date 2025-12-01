@@ -19,16 +19,16 @@ This version removes the PostgreSQL and cAdvisor dependencies in favor of a ligh
    flowchart TD
        subgraph K8s[Kubernetes Cluster]
            subgraph Backend
-               R[rustcost-core (Axum Backend)]
+               R["rustcost-core (Axum Backend)"]
            end
            subgraph Dashboard
-               F[rustcost-dashboard (React UI)]
+               F["rustcost-dashboard (React UI)"]
            end
            subgraph Storage
-               V[(Persistent Volume - data/)]
+               V[("Persistent Volume - data/")]
            end
            subgraph Metrics
-               N[Node Exporter (optional)]
+               N["Node Exporter (optional)"]
            end
        end
 
