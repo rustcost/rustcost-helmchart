@@ -1,0 +1,47 @@
+{{- if .Values.gpuExporter.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "rustcost.fullname" . }}-gpu-exporter
+  labels:
+    {{- include "rustcost.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "rustcost.name" . }}-gpu-exporter
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "rustcost.name" . }}-gpu-exporter
+        release: {{ .Release.Name }}
+    spec:
+      {{- with .Values.gpuExporter.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gpuExporter.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gpuExporter.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: gpu-exporter
+          image: "{{ .Values.gpuExporter.image.repository }}:{{ .Values.gpuExporter.image.tag }}"
+          imagePullPolicy: {{ .Values.gpuExporter.image.pullPolicy }}
+          env:
+            - name: GPU_EXPORTER_COMPLEX
+              value: "{{ .Values.gpuExporter.env.complex }}"
+            - name: PORT
+              value: "{{ .Values.gpuExporter.port }}"
+            - name: COLLECT_INTERVAL_SEC
+              value: "{{ .Values.gpuExporter.env.collectIntervalSec }}"
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.gpuExporter.port }}
+          resources:
+            {{- toYaml .Values.gpuExporter.resources | nindent 12 }}
+{{- end }}

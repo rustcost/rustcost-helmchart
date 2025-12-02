@@ -39,6 +39,11 @@ spec:
               value: "http://{{ default (printf "%s-cadvisor" (include "rustcost.fullname" .)) .Values.cadvisor.serviceName }}:{{ .Values.cadvisor.port }}/metrics"
             {{- end }}
 
+            {{- if .Values.gpuExporter.enabled }}
+            - name: GPU_EXPORTER_URLS
+              value: "http://{{ include "rustcost.fullname" . }}-gpu-exporter:{{ .Values.gpuExporter.port }}/metrics"
+            {{- end }}
+
             - name: RUST_LOG
               value: {{ include "rustcost.rustlog" . | quote }}
 

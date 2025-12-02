@@ -19,7 +19,7 @@ logging:
 # -----------------------------
 image:
   repository: kimc1992/rustcost-core
-  tag: "1.0.0-dev.16"
+  tag: "1.0.0-dev.18"
   pullPolicy: Always
 
 service:
@@ -69,6 +69,26 @@ nodeExporter:
   enabled: false
   image: quay.io/prometheus/node-exporter:v1.8.1
   port: 9100
+
+# -----------------------------
+# GPU Exporter (optional)
+# -----------------------------
+gpuExporter:
+  enabled: false
+  image:
+    repository: kimc1992/rustcost-gpu-exporter
+    tag: "0.0.1"
+    pullPolicy: IfNotPresent
+  port: 8000
+  env:
+    complex: 0
+    collectIntervalSec: 60
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 # -----------------------------
 # cAdvisor (optional external collector)

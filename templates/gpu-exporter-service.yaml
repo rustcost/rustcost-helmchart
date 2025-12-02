@@ -1,0 +1,18 @@
+{{- if .Values.gpuExporter.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rustcost.fullname" . }}-gpu-exporter
+  labels:
+    {{- include "rustcost.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - name: metrics
+      port: {{ .Values.gpuExporter.port }}
+      targetPort: metrics
+      protocol: TCP
+  selector:
+    app: {{ include "rustcost.name" . }}-gpu-exporter
+    release: {{ .Release.Name }}
+{{- end }}
