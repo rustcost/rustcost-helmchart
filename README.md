@@ -9,7 +9,8 @@ This version removes the PostgreSQL and cAdvisor dependencies in favor of a ligh
 ## Maintainer
 
 - [@songk1992](https://github.com/songk1992)
-
+- [@RyuDK](https://github.com/RyuDK)
+- [@HakyungYoun](https://github.com/HakyungYoun)
 ---
 
 ### 🧭 Architecture Overview
@@ -75,7 +76,7 @@ helm search repo rustcost
 
 ```bash
 helm upgrade --install rustcost rustcost/rustcost \
-  -n rustcost --create-namespace
+  -n rustcost --create-namespace --vrsion 1.0.0-dev.16
 ```
 
 This deploys:
@@ -92,7 +93,7 @@ This deploys:
 helm install rustcost rustcost/rustcost \
   --namespace rustcost --create-namespace \
   --set dashboard.enabled=false \
-  --set nodeExporter.enabled=false
+  --set gpuExporter.enabled=false
 ```
 
 ---
@@ -103,17 +104,17 @@ helm install rustcost rustcost/rustcost \
 helm install rustcost rustcost/rustcost \
   --namespace rustcost --create-namespace \
   --set dashboard.enabled=true \
-  --set nodeExporter.enabled=false
+  --set gpuExporter.enabled=false
 ```
 
 ---
 
-### 4. Enable Node Exporter
+### 4. Enable GPU Exporter
 
 ```bash
 helm install rustcost rustcost/rustcost \
   --namespace rustcost --create-namespace \
-  --set nodeExporter.enabled=true
+  --set gpuExporter.enabled=true
 ```
 
 ---
@@ -155,7 +156,7 @@ Time:        29ms
 
 - Data is persisted using a PVC (default size: `5Gi`, mount path: `/app/data`).
 - PostgreSQL and cAdvisor are **no longer used**.
-- Node Exporter (`v1.8.x`) is optional and disabled by default.
+- GPU Exporter is optional and disabled by default.
 - The dashboard (`rustcost-dashboard`) communicates with the backend at `http://rustcost-core:80`.
 - No external database or Prometheus is required.
 
@@ -174,8 +175,8 @@ Time:        29ms
 ## 🌐 Related
 
 - [RustCost Project](https://github.com/rustcost)
-- [Docker Hub – rustcost-core](https://hub.docker.com/repository/docker/kimc1992/rustcost-core)
-- [Docker Hub – rustcost-dashboard](https://hub.docker.com/repository/docker/kimc1992/rustcost-dashboard)
-- [Node Exporter](https://github.com/prometheus/node_exporter)
+- [Docker Hub – core](https://hub.docker.com/repository/docker/rustcost/core)
+- [Docker Hub – dashboard](https://hub.docker.com/repository/docker/rustcost/dashboard)
+- [Docker Hub – gpu-exporter](https://hub.docker.com/repository/docker/rustcost/gpu-exporter)
 
 ---
