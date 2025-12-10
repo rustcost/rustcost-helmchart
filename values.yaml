@@ -18,8 +18,8 @@ logging:
 # Backend (rustcost-core)
 # -----------------------------
 image:
-  repository: kimc1992/rustcost-core
-  tag: "1.0.0-dev.18"
+  repository: rustcost/core
+  tag: "1.0.0-dev.19"
   pullPolicy: Always
 
 service:
@@ -52,8 +52,8 @@ persistence:
 dashboard:
   enabled: true
   image:
-    repository: kimc1992/rustcost-dashboard
-    tag: "1.0.0-dev.3"
+    repository: rustcost/dashboard
+    tag: "1.0.0-dev.5"
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -63,20 +63,12 @@ dashboard:
     VITE_BACKEND_URL: "http://rustcost-core-svc:80"
 
 # -----------------------------
-# Node Exporter (optional)
-# -----------------------------
-nodeExporter:
-  enabled: false
-  image: quay.io/prometheus/node-exporter:v1.8.1
-  port: 9100
-
-# -----------------------------
 # GPU Exporter (optional)
 # -----------------------------
 gpuExporter:
   enabled: false
   image:
-    repository: kimc1992/rustcost-gpu-exporter
+    repository: rustcost/gpu-exporter
     tag: "0.0.1"
     pullPolicy: IfNotPresent
   port: 8000
