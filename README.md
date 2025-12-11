@@ -29,7 +29,7 @@ This version removes the PostgreSQL and cAdvisor dependencies in favor of a ligh
                V[("Persistent Volume - data/")]
            end
            subgraph Metrics
-               N["Node Exporter (optional)"]
+               N["GPU Exporter (optional)"]
            end
        end
 
