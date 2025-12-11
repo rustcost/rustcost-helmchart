@@ -76,7 +76,7 @@ helm search repo rustcost
 
 ```bash
 helm upgrade --install rustcost rustcost/rustcost \
-  -n rustcost --create-namespace --vrsion 1.0.0-dev.16
+  -n rustcost --create-namespace --version 1.0.0-dev.16
 ```
 
 This deploys:
