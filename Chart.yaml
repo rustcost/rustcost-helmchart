@@ -1,6 +1,6 @@
 apiVersion: v2
 name: rustcost
-description: A Helm chart for deploying Rustcost (Axum backend, optional React frontend, optional PostgreSQL, and node-level metrics collectors like node-exporter and cAdvisor)
+description: A Helm chart for deploying Rustcost (Axum backend, optional React frontend, optional PostgreSQL, and cAdvisor)
 
 type: application
 
