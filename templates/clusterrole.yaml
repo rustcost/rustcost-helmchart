@@ -20,6 +20,7 @@ rules:
       - namespaces
       - resourcequotas
       - limitranges
+      - services
     verbs: ["get", "list", "watch"]
 
   # --- Storage Resources (for cost calculation) ---
@@ -29,26 +30,36 @@ rules:
       - persistentvolumeclaims
     verbs: ["get", "list", "watch"]
 
-  # --- Metrics API (for usage and cost analysis) ---
+  # --- Metrics API ---
   - apiGroups: ["metrics.k8s.io"]
     resources:
       - pods
       - nodes
     verbs: ["get", "list"]
 
+  # --- Workload Resources ---
   - apiGroups: ["apps"]
     resources:
       - deployments
       - replicasets
+      - statefulsets
+      - daemonsets
     verbs: ["get", "list", "watch"]
 
-  # --- Autoscaling Resources (for scaling-based cost) ---
+  # --- Batch Jobs ---
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: ["get", "list", "watch"]
+
+  # --- Autoscaling Resources ---
   - apiGroups: ["autoscaling"]
     resources:
       - horizontalpodautoscalers
     verbs: ["get", "list", "watch"]
 
-  # --- (Optional) Networking for ingress/egress cost ---
+  # --- Networking Resources ---
   - apiGroups: ["networking.k8s.io"]
     resources:
       - ingresses
