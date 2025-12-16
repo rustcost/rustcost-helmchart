@@ -60,18 +60,13 @@ RBAC role normalizer
 */}}
 {{- define "rustcost.rbacRole" -}}
 {{- default "viewer" .Values.rbac.role | lower -}}
-{{- end -}}
+{{- end }}
 
 {{/*
-ServiceAccount name builder
-- If rbac.serviceAccount.name is set, use it.
-- Else: "<release>-<role>-sa"
+ServiceAccount name (fixed, based on fullnameOverride)
+- Always: <fullname>-<role>-sa
+- If fullnameOverride: rustcost  => rustcost-viewer-sa
 */}}
 {{- define "rustcost.saName" -}}
-{{- $role := include "rustcost.rbacRole" . -}}
-{{- if .Values.rbac.serviceAccount.name -}}
-{{- .Values.rbac.serviceAccount.name -}}
-{{- else -}}
-{{- printf "%s-%s-sa" .Release.Name $role -}}
-{{- end -}}
-{{- end -}}
+{{- printf "%s-%s-sa" (include "rustcost.fullname" .) (include "rustcost.rbacRole" .) -}}
+{{- end }}
