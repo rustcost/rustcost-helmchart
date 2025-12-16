@@ -54,3 +54,24 @@ Logging level builder
 {{- end -}}
 {{- end -}}
 
+{{/*
+RBAC role normalizer
+- values.yaml: rbac.role = viewer|developer|admin
+*/}}
+{{- define "rustcost.rbacRole" -}}
+{{- default "viewer" .Values.rbac.role | lower -}}
+{{- end -}}
+
+{{/*
+ServiceAccount name builder
+- If rbac.serviceAccount.name is set, use it.
+- Else: "<release>-<role>-sa"
+*/}}
+{{- define "rustcost.saName" -}}
+{{- $role := include "rustcost.rbacRole" . -}}
+{{- if .Values.rbac.serviceAccount.name -}}
+{{- .Values.rbac.serviceAccount.name -}}
+{{- else -}}
+{{- printf "%s-%s-sa" .Release.Name $role -}}
+{{- end -}}
+{{- end -}}

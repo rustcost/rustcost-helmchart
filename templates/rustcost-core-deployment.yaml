@@ -17,7 +17,7 @@ spec:
         {{- include "rustcost.selectorLabels" . | nindent 8 }}
         component: core
     spec:
-      serviceAccountName: {{ include "rustcost.fullname" . }}-sa
+      serviceAccountName: {{ include "rustcost.saName" . | quote }}
 
       securityContext:
         fsGroup: 1000
