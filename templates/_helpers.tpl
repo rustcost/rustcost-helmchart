@@ -54,3 +54,19 @@ Logging level builder
 {{- end -}}
 {{- end -}}
 
+{{/*
+RBAC role normalizer
+- values.yaml: rbac.role = viewer|developer|admin
+*/}}
+{{- define "rustcost.rbacRole" -}}
+{{- default "viewer" .Values.rbac.role | lower -}}
+{{- end }}
+
+{{/*
+ServiceAccount name (fixed, based on fullnameOverride)
+- Always: <fullname>-<role>-sa
+- If fullnameOverride: rustcost  => rustcost-viewer-sa
+*/}}
+{{- define "rustcost.saName" -}}
+{{- printf "%s-%s-sa" (include "rustcost.fullname" .) (include "rustcost.rbacRole" .) -}}
+{{- end }}

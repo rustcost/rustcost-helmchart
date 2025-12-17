@@ -28,5 +28,7 @@ spec:
           env:
             - name: VITE_BACKEND_URL
               value: {{ .Values.dashboard.env.VITE_BACKEND_URL | quote }}
+            - name: VITE_RBAC_ROLE
+              value: {{ .Values.rbac.role | quote }}
           resources: {}
 {{- end }}

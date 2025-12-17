@@ -108,7 +108,8 @@ ingress:
 # RBAC / Service Account
 # -----------------------------
 rbac:
-  create: true
+  enabled: true
+  role: viewer # viewer | developer | admin
   serviceAccount:
     create: true
     name: ""

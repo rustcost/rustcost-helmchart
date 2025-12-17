@@ -1,68 +1,141 @@
-{{- if .Values.rbac.create }}
+{{- if and .Values.rbac.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "rustcost.fullname" . }}-clusterrole
+  name: {{ printf "%s-%s" (include "rustcost.fullname" .) (include "rustcost.rbacRole" .) | quote }}
   labels:
     app.kubernetes.io/name: {{ include "rustcost.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     helm.sh/chart: {{ include "rustcost.chart" . }}
 rules:
-  # --- Core Kubernetes Objects ---
-  - apiGroups: [""]
-    resources:
-      - pods
-      - pods/status
-      - nodes
-      - nodes/status
-      - nodes/proxy
-      - namespaces
-      - resourcequotas
-      - limitranges
-      - services
-    verbs: ["get", "list", "watch"]
+  {{- $role := include "rustcost.rbacRole" . }}
 
-  # --- Storage Resources (for cost calculation) ---
-  - apiGroups: [""]
-    resources:
-      - persistentvolumes
-      - persistentvolumeclaims
-    verbs: ["get", "list", "watch"]
+  {{- if eq $role "viewer" }}
+# Viewer: read-only + logs
+- apiGroups: [""]
+  resources:
+    - pods
+    - pods/status
+    - nodes
+    - nodes/status
+    - nodes/proxy
+    - namespaces
+    - resourcequotas
+    - limitranges
+    - services
+    - events
+  verbs: ["get", "list", "watch"]
 
-  # --- Metrics API ---
-  - apiGroups: ["metrics.k8s.io"]
-    resources:
-      - pods
-      - nodes
-    verbs: ["get", "list"]
+- apiGroups: [""]
+  resources:
+    - persistentvolumes
+    - persistentvolumeclaims
+  verbs: ["get", "list", "watch"]
 
-  # --- Workload Resources ---
-  - apiGroups: ["apps"]
-    resources:
-      - deployments
-      - replicasets
-      - statefulsets
-      - daemonsets
-    verbs: ["get", "list", "watch"]
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["pods", "nodes"]
+  verbs: ["get", "list"]
 
-  # --- Batch Jobs ---
-  - apiGroups: ["batch"]
-    resources:
-      - jobs
-      - cronjobs
-    verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+  verbs: ["get", "list", "watch"]
 
-  # --- Autoscaling Resources ---
-  - apiGroups: ["autoscaling"]
-    resources:
-      - horizontalpodautoscalers
-    verbs: ["get", "list", "watch"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch"]
 
-  # --- Networking Resources ---
-  - apiGroups: ["networking.k8s.io"]
-    resources:
-      - ingresses
-      - networkpolicies
-    verbs: ["get", "list", "watch"]
-{{- end }}
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "watch"]
+
+# kubectl logs
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list", "watch"]
+
+  {{- else if eq $role "developer" }}
+# Developer: create/delete/edit + logs/exec/port-forward
+- apiGroups: [""]
+  resources:
+    - nodes
+    - nodes/status
+    - nodes/proxy
+    - namespaces
+    - resourcequotas
+    - limitranges
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: [""]
+  resources:
+    - pods
+    - pods/status
+    - services
+    - configmaps
+    - secrets
+    - endpoints
+    - events
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+- apiGroups: [""]
+  resources: ["persistentvolumes"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["pods", "nodes"]
+  verbs: ["get", "list"]
+
+# logs/exec/port-forward
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+
+- apiGroups: [""]
+  resources: ["pods/portforward"]
+  verbs: ["create"]
+
+  {{- else if eq $role "admin" }}
+# Admin: full access
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+  {{- else }}
+  {{- fail (printf "invalid rbac.role: %s (expected: viewer|developer|admin)" $role) }}
+  {{- end }}
+
+  {{- with .Values.rbac.extraRules }}
+  {{- if gt (len .) 0 }}
+# Extra rules injected from values
+  {{ toYaml . | nindent 2 }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
