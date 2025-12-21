@@ -83,7 +83,7 @@ This deploys:
 
 - `rustcost-core` backend (Axum)
 - PVC mounted at `/app/data`
-- Optional Node Exporter (disabled by default)
+- Optional GPU Exporter DaemonSet (disabled by default)
 
 ---
 
